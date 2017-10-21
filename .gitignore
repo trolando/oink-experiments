@@ -1,0 +1,15 @@
+modelchecking/*
+modelchecking.zip
+equivchecking/*
+equivchecking.zip
+pgsolver/*
+pgsolver.zip
+mlsolver/*
+mlsolver.zip
+langincl/*
+bench-li.zip
+random/*
+tools/*
+job??*
+slurm-?*
+*.pyc
