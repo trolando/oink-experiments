@@ -46,7 +46,7 @@ To obtain the results to csv
 Remarks
 =======
 * List of games odd cycles: oddcycles
-* Log files used for the paper: logs.tar.bz2
+* Log files used for the paper: logs.tar
 * The csv files used for the paper: results.csv, par2.csv
 * Random games used for the paper: random.tar.bz2 (split into 100M files)
 * Use "Release" builds in CMake
