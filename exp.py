@@ -50,12 +50,12 @@ class ExpOink(Experiment):
         return self
 
 
-class ExpOinkRSL(ExpOink):
+class ExpOinkNPP(ExpOink):
     def __init__(self, name, model):
         self.group = name
-        self.solver = "rsl"
-        self.name = "{}-rsl".format(name)
-        self.call = ["tools/oink", "-v", model]
+        self.solver = "npp"
+        self.name = "{}-npp".format(name)
+        self.call = ["tools/oink", "--npp", "-v", model]
         self.model = model
 
 
@@ -101,6 +101,15 @@ class ExpOinkRRDP(ExpOink):
         self.solver = "rrdp"
         self.name = "{}-rrdp".format(name)
         self.call = ["tools/oink", "--rrdp", "-v", model]
+        self.model = model
+
+
+class ExpOinkUZLK(ExpOink):
+    def __init__(self, name, model):
+        self.group = name
+        self.solver = "uzlk"
+        self.name = "{}-uzlk".format(name)
+        self.call = ["tools/oink", "--uzlk", "-w", "-1", "-v", model]
         self.model = model
 
 
@@ -213,18 +222,27 @@ class ExpPgsolver(Experiment):
     def dlo(self):
         self.name = "{}-dlo".format(self.name)
         self.call += ["-dlo"]
+        return self
 
     def dgo(self):
         self.name = "{}-dgo".format(self.name)
         self.call += ["-dgo"]
+        return self
 
     def dsg(self):
         self.name = "{}-dsg".format(self.name)
         self.call += ["-dsg"]
+        return self
 
     def noscc(self):
         self.name = "{}-dsd".format(self.name)
         self.call += ["-dsd"]
+        return self
+
+    def nosp(self):
+        self.name = "{}-n".format(self.name)
+        self.call += ["-dsd", "-dgo", "-dlo", "-dsg"]
+        return self
 
 
 class ExpPgsolverZlk(ExpPgsolver):
@@ -232,7 +250,7 @@ class ExpPgsolverZlk(ExpPgsolver):
         self.group = name
         self.solver = "pgzlk"
         self.name = "{}-pgzlk".format(name)
-        self.call = ["tools/pgsolver", "-dsd", "-global", "recursive", "-jh", model]
+        self.call = ["tools/pgsolver", "-global", "recursive", "-jh", model]
         self.model = model
 
 
@@ -241,7 +259,7 @@ class ExpPgsolverSpm(ExpPgsolver):
         self.group = name
         self.solver = "pgspm"
         self.name = "{}-pgspm".format(name)
-        self.call = ["tools/pgsolver", "-dsd", "-global", "smallprog", "-jh", model]
+        self.call = ["tools/pgsolver", "-global", "smallprog", "-jh", model]
         self.model = model
 
 
@@ -250,7 +268,7 @@ class ExpPgsolverSI(ExpPgsolver):
         self.group = name
         self.solver = "pgsi"
         self.name = "{}-pgsi".format(name)
-        self.call = ["tools/pgsolver", "-dsd", "-global", "optstratimprov", "-jh", model]
+        self.call = ["tools/pgsolver", "-global", "optstratimprov", "-jh", model]
         self.model = model
 
 
@@ -399,12 +417,13 @@ class DirectoryExperiments(Experiments):
 class OinkExperiments(DirectoryExperiments):
     def get_solvers(self):
         return {
-            #'rsl': lambda name, filename: ExpOinkRSL(name, filename),
+            'npp': lambda name, filename: ExpOinkNPP(name, filename),
             'pp': lambda name, filename: ExpOinkPP(name, filename),
             'ppp': lambda name, filename: ExpOinkPPP(name, filename),
             'rr': lambda name, filename: ExpOinkRR(name, filename),
             'dp': lambda name, filename: ExpOinkDP(name, filename),
             'rrdp': lambda name, filename: ExpOinkRRDP(name, filename),
+            'uzlk': lambda name, filename: ExpOinkUZLK(name, filename),
             'zlk': lambda name, filename: ExpOinkZLK(name, filename),
             'psi': lambda name, filename: ExpOinkPSI(name, filename),
             'spm': lambda name, filename: ExpOinkSPM(name, filename),
@@ -420,7 +439,7 @@ class ParsiExperiments(DirectoryExperiments):
             'psi-n': lambda name, filename: ExpOinkPSI(name, filename).nosp(),
             'psi-1-n': lambda name, filename: ExpOinkPSI1(name, filename).nosp(),
             'psi-8-n': lambda name, filename: ExpOinkPSI8(name, filename).nosp(),
-            'pgsi': lambda name, filename: ExpPgsolverSI(name, filename),
+            'pgsi': lambda name, filename: ExpPgsolverSI(name, filename).nosp(),
             'parsi-seq': lambda name, filename: ExpParsiSeq(name, filename),
             'parsi-mc1': lambda name, filename: ExpParsiMC(name, filename, 1),
             'parsi-mc8': lambda name, filename: ExpParsiMC(name, filename, 8),
@@ -435,7 +454,7 @@ class SPMExperiments(DirectoryExperiments):
             'tspm-n': lambda name, filename: ExpOinkTSPM(name, filename).nosp(),
             'qpt-n': lambda name, filename: ExpOinkQPT(name, filename).nosp(),
             'pbespg': lambda name, filename: ExpPBESPGSPM(name, filename),
-            'pgspm': lambda name, filename: ExpPgsolverSpm(name, filename),
+            'pgspm': lambda name, filename: ExpPgsolverSpm(name, filename).nosp(),
         }
 
 
@@ -443,10 +462,11 @@ class ZLKExperiments(DirectoryExperiments):
     """Experiments to compare Zielonka implementations."""
     def get_solvers(self):
         return {
+            'uzlk-n': lambda name, filename: ExpOinkUZLK(name, filename).nosp(),
             'zlk-n': lambda name, filename: ExpOinkZLK(name, filename).nosp(),
             'zlk-1-n': lambda name, filename: ExpOinkZLK1(name, filename).nosp(),
             'zlk-8-n': lambda name, filename: ExpOinkZLK8(name, filename).nosp(),
-            'pgzlk': lambda name, filename: ExpPgsolverZlk(name, filename),
+            'pgzlk': lambda name, filename: ExpPgsolverZlk(name, filename).nosp(),
             'spg-seq': lambda name, filename: ExpSPGSeq(name, filename),
             'spg-mc': lambda name, filename: ExpSPGMC(name, filename),
             'pbeszlk': lambda name, filename: ExpPBESPGZLK(name, filename),
@@ -461,16 +481,13 @@ if (os.path.isfile("forbidden")):
     forbidden = [line.strip() for line in open("forbidden")]
 
 # make engine
-default_timeout = 600
+default_timeout = 900
 sr = ExperimentEngine(outdir='logs', timeout=default_timeout)
 
 dirs = []
 dirs += ["random"]
 dirs += ["modelchecking"]
 dirs += ["equivchecking"]
-# dirs += ["pgsolver"]
-# dirs += ["mlsolver"]
-# dirs += ["langincl"]
 
 for directory in dirs:
     sr += OinkExperiments(directory, forbidden)
