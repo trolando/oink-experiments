@@ -426,7 +426,7 @@ class OinkExperiments(DirectoryExperiments):
             'uzlk': lambda name, filename: ExpOinkUZLK(name, filename),
             'zlk': lambda name, filename: ExpOinkZLK(name, filename),
             'psi': lambda name, filename: ExpOinkPSI(name, filename),
-            'spm': lambda name, filename: ExpOinkSPM(name, filename),
+            # 'spm': lambda name, filename: ExpOinkSPM(name, filename),
             'tspm': lambda name, filename: ExpOinkTSPM(name, filename),
             'qpt': lambda name, filename: ExpOinkQPT(name, filename),
             }
@@ -450,7 +450,7 @@ class SPMExperiments(DirectoryExperiments):
     """Experiments to compare progress measures implementations."""
     def get_solvers(self):
         return {
-            'spm-n': lambda name, filename: ExpOinkSPM(name, filename).nosp(),
+            #'spm-n': lambda name, filename: ExpOinkSPM(name, filename).nosp(),
             'tspm-n': lambda name, filename: ExpOinkTSPM(name, filename).nosp(),
             'qpt-n': lambda name, filename: ExpOinkQPT(name, filename).nosp(),
             'pbespg': lambda name, filename: ExpPBESPGSPM(name, filename),
